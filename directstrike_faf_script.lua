@@ -14,8 +14,8 @@ local restrictions = (categories.BUILTBYTIER1ENGINEER - categories.DIRECTFIRE) +
 
 function OnPopulate()
 	ScenarioInfo.Options.Victory = 'sandbox'
-    ScenarioUtils.InitializeArmies()
-    ScenarioFramework.SetPlayableArea('AREA_1' , false)
+    	ScenarioUtils.InitializeArmies()
+    	ScenarioFramework.SetPlayableArea('AREA_1' , false)
 	fixSpreadAttack()
 	import('/lua/selfdestruct.lua').ToggleSelfDestruct = function(data) end
 	import('/lua/SimUtils.lua').GiveUnitsToPlayer = function() end
@@ -26,7 +26,7 @@ function OnPopulate()
 	end 
 	
 	-- ScenarioInfo.CampaignMode = true
-    -- Sync.CampaignMode = true
+    	-- Sync.CampaignMode = true
 	-- import('/lua/sim/simuistate.lua').IsCampaign(true)
 
 end
