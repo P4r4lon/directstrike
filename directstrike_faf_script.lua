@@ -369,13 +369,13 @@ function dialoguemanager()
 			--Rulesdialogue = CreateDialogue("Buy units of your race for in-game currency-cashpoints using ur worker. Assist any unit u want and he will be added to ur collection. Collection will be spawned every wave. Kill side structures and get more cash. The bonus-structures will give u stable income just like cashextractor that u can buy on base. Structures will move from player to player when they are killed. The main objective is kill the enemy bunker after his death the game will be end. Good luck!",{"close window"},'left')
 		end
 	end	
-		if Rulesdialogue != nil then 
-			Rulesdialogue.OnButtonPressed = function(self, info)	
-				if GetFocusArmy() == info.presser then
-					Rulesdialogue:Destroy()
-				end
-			end	
-		end
+	if Rulesdialogue != nil then 
+		Rulesdialogue.OnButtonPressed = function(self, info)	
+			if GetFocusArmy() == info.presser then
+				Rulesdialogue:Destroy()
+			end
+		end	
+	end
 	
 	local WipeCounter = 0
 	while true do 
@@ -423,6 +423,7 @@ function dialoguemanager()
 		end
 	end	
 end
+
 ---the cleaner of your potential troop recruitment---
 function WipeThemAll()  ---
 	for i, h in Humans do
@@ -439,6 +440,7 @@ function WipeThemAll()  ---
 		end
 	end
 end
+
 ---default shop units---
 function CreateDefSet()
 	if HeroesOn == 1 then 
@@ -461,9 +463,9 @@ function CreateDefSet()
 		cashextractor:SetCanBeKilled(false)
 		cashextractor:HideBone(0, true)
 		cashextractor.Big = import('/lua/sim/Entity.lua').Entity({Owner = cashextractor,})
-        cashextractor.Big:SetMesh(cashextractor:GetBlueprint().Display.MeshBlueprint, true)
-        cashextractor.Big:SetScale(0.3)
-        cashextractor.Big:AttachBoneTo(0, cashextractor, 0)
+       		cashextractor.Big:SetMesh(cashextractor:GetBlueprint().Display.MeshBlueprint, true)
+       		cashextractor.Big:SetScale(0.3)
+       		cashextractor.Big:AttachBoneTo(0, cashextractor, 0)
 			
 		local omni = CreateUnitHPR('UEB3104','ParagonArmy'..i, pos[1], pos[2], pos[3] + alignment + alignment/2, 0,0,0);	
 		omni:SetCustomName('OMNI sensor '..OmniCost)
@@ -471,9 +473,9 @@ function CreateDefSet()
 		omni:SetIntelRadius('Radar', 1)
 		omni:SetIntelRadius('Omni', 1)
 		omni.Big = import('/lua/sim/Entity.lua').Entity({Owner = omni,})
-        omni.Big:SetMesh(omni:GetBlueprint().Display.MeshBlueprint, true)
-        omni.Big:SetScale(0.3)
-        omni.Big:AttachBoneTo(0, omni, 0)
+       		omni.Big:SetMesh(omni:GetBlueprint().Display.MeshBlueprint, true)
+       		omni.Big:SetScale(0.3)
+       		omni.Big:AttachBoneTo(0, omni, 0)
 	end
 	
 	MakeSomeRallyPoints()
