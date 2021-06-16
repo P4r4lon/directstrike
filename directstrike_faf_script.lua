@@ -4,11 +4,11 @@
 --see also https://github.com/P4r4lon/directstrike
 
 --------------------------------------------------------------------------------
-
+local mapPath = '/maps/directstrike_faf.v0045/'
 local ScenarioUtils = import('/lua/sim/ScenarioUtilities.lua')
 local ScenarioFramework = import('/lua/ScenarioFramework.lua')
 local Utilities = import('/lua/utilities.lua')
-local OpStrings = import('/maps/directstrike_faf.v0045/directstrike_faf_strings.lua')
+local OpStrings = import(mapPath .. 'directstrike_faf_strings.lua')
 local restrictions = (categories.BUILTBYTIER1ENGINEER - categories.DIRECTFIRE) + (categories.BUILTBYTIER2ENGINEER - categories.DIRECTFIRE) + (categories.BUILTBYTIER3ENGINEER - categories.DIRECTFIRE - (categories.LAND - categories.ARTILLERY * categories.CYBRAN))
 -- local Objectives = import('/lua/ScenarioFramework.lua').Objectives
 
@@ -521,7 +521,11 @@ function UnitManager(set, i)
 	for k, u in set do 
 		if counter == 6 then column = column + 7.5 counter = 0 end 
 		SetAlliance('SupportArmy'..Humans[i].ArmyId, ArmyTable[Humans[i].ArmyId], 'Ally')
-		local newunit = CreateUnitHPR(u, 'SupportArmy'..Humans[i].ArmyId, Humans[i].pos[1] + 7.5 * counter, Humans[i].pos[2], column, 0,0,0);
+
+		local unitX = Humans[i].pos[1] + 7.5 * counter
+		local unitY = Humans[i].pos[2]
+		local unitZ = column
+		local newunit = CreateUnitHPR(u, 'SupportArmy'..Humans[i].ArmyId, unitX, unitY, unitZ, 0,0,0);
 		newunit:SetCanBeKilled(false)
 		local cost = CostFix(newunit)
 		newunit:SetCustomName(cost)
@@ -529,6 +533,8 @@ function UnitManager(set, i)
 			newunit:SetCustomName('HERO '..cost)
 		end
 		
+		PutCostOnMap(cost, unitX, unitY, unitZ, Humans[i].ArmyId, u)
+
 		newunit:SetIntelRadius('Vision', 1)
 		newunit:SetIntelRadius('Radar', 1)
 		newunit:SetIntelRadius('Omni', 1)
@@ -556,6 +562,34 @@ CostFix = function(unit)
 		if EntityCategoryContains(categories.SUBCOMMANDER * categories.CYBRAN, unit) then fix = 53 end
 		
 	return bp.Economy.BuildCostMass * fix 
+	end
+end
+
+PutCostOnMap = function(cost, unitX, unitY, unitZ, armyId, unitType)
+	local pathPrefix = mapPath .. 'decals/numbers/'
+	local pathPostfix = 'number.dds'
+
+	local Offset = function(type) 
+		if type == 'UEL0401' then return 5 end
+		if type == 'URL0402' then return 5 end
+		if type == 'XRL0403' then return 5 end
+		if type == 'XSL0401' then return 4 end
+		if type == 'UAL0401' then return 4 end
+		return 1.5
+	end
+	
+	local costString = tostring(cost)
+	local length = string.len(costString)
+
+	for i = 1, length do
+		local figure = string.sub(costString, i ,i)
+		local decalPath = pathPrefix .. figure .. pathPostfix
+
+		local x = unitX - (length / 2) + i - 0.5
+		local y = unitY
+		local z = unitZ + Offset(unitType)
+		
+		CreateDecal( Vector(x, y, z), 0, decalPath, '', 'Albedo', 1, 1, 1500, 0, armyId )
 	end
 end
 ---------------------------------------------------
@@ -1483,6 +1517,9 @@ function CheckVictoryConditions()
 			end			
 
 			clearAllUnits()
+
+            WaitSeconds(3)
+            EndGame()
 		end
 	end
 end
