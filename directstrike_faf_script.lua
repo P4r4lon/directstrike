@@ -231,7 +231,7 @@ function LOC(s)
 end
 
 function GetStringFromArray(arr)
-local str = '' 
+	local str = '' 
 	for i,a in arr do
 		str = str..""..a.."\n"
 	end
