@@ -1179,7 +1179,7 @@ function SetAlliances(flag)
 end
 
 
---~~~~~~~~~~~~~wtf is this~~~~~~~~~~~~~--unbalanced thread below
+--~~~~~~~~~~~~~~~~~~~~~~~~~~--unbalanced thread below
 function HeroUp(hero)
 	local bp = hero:GetBlueprint()
 	hero.DoVeterancyHealing = function(self, level) end
