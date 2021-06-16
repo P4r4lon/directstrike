@@ -597,7 +597,7 @@ function shopchecker()
 		coroutine.yield(1)
 		for i, hum in Humans do 
 			if Humans[i].ArmyId != nil then 
-				GetArmyBrain(Humans[i].ArmyId):TakeResource('Mass', GetArmyBrain(Humans[i].ArmyId):GetEconomyStored('Mass')) -- crutch for fuckers who wanna build city 
+				GetArmyBrain(Humans[i].ArmyId):TakeResource('Mass', GetArmyBrain(Humans[i].ArmyId):GetEconomyStored('Mass')) 
 				local unit = Humans[i].unit
 				if not unit:IsDead() then 
 					unit:SetCustomName(math.floor(Humans[i].cashpoints))
