@@ -9,6 +9,7 @@ local ScenarioUtils = import('/lua/sim/ScenarioUtilities.lua')
 local ScenarioFramework = import('/lua/ScenarioFramework.lua')
 local Utilities = import('/lua/utilities.lua')
 local OpStrings = import(mapPath .. 'directstrike_faf_strings.lua')
+local ArmySets = import(mapPath .. 'armysets.lua')
 local restrictions = (categories.BUILTBYTIER1ENGINEER - categories.DIRECTFIRE) + (categories.BUILTBYTIER2ENGINEER - categories.DIRECTFIRE) + (categories.BUILTBYTIER3ENGINEER - categories.DIRECTFIRE - (categories.LAND - categories.ARTILLERY * categories.CYBRAN))
 -- local Objectives = import('/lua/ScenarioFramework.lua').Objectives
 
@@ -63,26 +64,21 @@ local WaveCounter = 0
 
 ----------------------------------------------------------------------------------------------------------------------------------------
 local Humans = {
-	['player1'] = {ArmySet = {bp=nil, buyWave=nil}},
-	['player2'] = {ArmySet = {bp=nil, buyWave=nil}},
-	['player3'] = {ArmySet = {bp=nil, buyWave=nil}},
-	['player4'] = {ArmySet = {bp=nil, buyWave=nil}}, 
-	['player5'] = {ArmySet = {bp=nil, buyWave=nil}},
-	['player6'] = {ArmySet = {bp=nil, buyWave=nil}},
+	['player1'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},},
+	['player2'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},},
+	['player3'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},},
+	['player4'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},}, 
+	['player5'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},},
+	['player6'] = {pos = {}, rallypointunit = {}, rallypoint = {}, unit = {}, ArmySet = {bp=nil, buyWave=nil}, structs = {},},
 }
 
 local DefaultData = {
 	ArmyId = nil,
 	cashpoints = 0,
-	pos = {},
-	rallypointunit = {},
-	rallypoint = {},
-	unit = {},
 	index = nil,
 	multiplier = income,
 	cashextractor = nil,
 	exinc = 0,
-	structs = {},
 	numstructs = 0,
 	teamindex = 1,
 	coeff = 0.1,
@@ -108,99 +104,13 @@ local taunts = {}
 
 
 -------------------units that can be purchased--------------------------------------------------------------------------------------------------------------------
-local CybranArmySet = {
-'URL0101',
-'URL0106',
-'URL0107',
-'URL0104',
-'URL0103',
-'DRL0204',
-'URL0202',
-'URL0203',
-'URL0205',
-'URL0111',
-'URL0306',
-'XRL0302',
-'URL0303',
-'XRL0305',
-'DRLK001',
-'URL0304',
-'URL0402',
-'XRL0403',
-'URA0101',
-'URA0302',
-'URA0103',
-'DRA0202',
-}
+local CybranArmySet = ArmySets.CybranArmySet
 
-local AeonArmySet = {
-'UAL0101',
-'UAL0106',
-'UAL0201',
-'UAL0104',
-'UAL0103',
-'UAL0202',
-'XAL0203',
-'UAL0205',
-'UAL0111',
-'UAL0307',
-'XAL0305',
-'UAL0303',
-'DALK003',
-'UAL0304',
-'DAL0310',
-'UAL0401',
-'UAA0101',
-'UAA0302',
-'UAA0103',
-'DAA0206',
-'XAA0202'
-}
+local AeonArmySet = ArmySets.AeonArmySet
 
-local UefArmySet = {
-'UEL0101',
-'UEL0106',
-'UEL0201',
-'UEL0104',
-'UEL0103',
-'DEL0204',
-'UEL0202',
-'UEL0203',
-'UEL0205',
-'UEL0111',
-'UEL0307',
-'UEL0303',
-'DELK002',
-'UEL0304',
-'XEL0305',
-'XEL0306',
-'UEL0401',
-'UEA0101',
-'UEA0302',
-'UEA0103',
-'DEA0202',
-}
+local UefArmySet = ArmySets.UefArmySet
 
-local SeraArmySet = {
-'XSL0101',
-'XSL0201',
-'XSL0104',
-'XSL0103',
-'XSL0202',
-'XSL0203',
-'XSL0205',
-'XSL0111',
-'XSL0303',
-'XSL0305',
-'DSLK004',
-'XSL0304',
-'XSL0307',
-'XSL0401',
-'XSA0101',
-'XSA0302',
-'XSA0103',
-'XSA0202',
-}
+local SeraArmySet = ArmySets.SeraArmySet
 
 local Heroes = {'URL0301', 'UAL0301_SIMPLECOMBAT', 'UEL0301_COMBAT', 'XSL0301'}
 
@@ -209,7 +119,7 @@ local Experimentals = {'xsl0401', 'ual0401', 'url0402', 'xrl0403', 'uel0401'} --
 --------supplementing--------------------------------------------------------------------------------------------------------------------------------
 PushData = function()
 	for i, h in Humans do
-		for j, val in DefaultData do 
+		for j, val in pairs(DefaultData) do 
 			h[j] = val
 		end
 	end
@@ -1272,7 +1182,7 @@ function HeroUp(hero)
   		for i = 1, hero:GetWeaponCount() do
 			local wep = hero:GetWeapon(i)
 			
-			local v = 7000
+			local v = 2000
 			wep:AddDamageMod(v)
 			v = 45
 			
@@ -1321,22 +1231,22 @@ function HeroUp(hero)
 		end
 	
 		
-			hero:CreateMyEnhancement('Pod', 60)
+			hero:CreateMyEnhancement('Pod', 30)
 			
 		local ShieldSpecs = {
-		ImpactEffects = 'UEFShieldHit01',
-		ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
-		Mesh = '/effects/entities/Shield01/Shield01_mesh',
-		MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
-        PersonalBubble = true,
-        RegenAssistMult = 60,
-        ShieldEnergyDrainRechargeTime = 5,
-        ShieldMaxHealth = 200000,
-        ShieldRechargeTime = 200,
-        ShieldRegenRate = 1000,
-        ShieldRegenStartTime = 2,
-        ShieldSize = 15,
-        ShieldVerticalOffset = 15,
+			ImpactEffects = 'UEFShieldHit01',
+			ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
+			Mesh = '/effects/entities/Shield01/Shield01_mesh',
+			MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
+      	  		PersonalBubble = true,
+       			RegenAssistMult = 60,
+       	 		ShieldEnergyDrainRechargeTime = 5,
+        		ShieldMaxHealth = 200000,
+        		ShieldRechargeTime = 200,
+        		ShieldRegenRate = 1000,
+        		ShieldRegenStartTime = 2,
+        		ShieldSize = 15,
+        		ShieldVerticalOffset = 15,
 		}
 		--hero:CreateShield(ShieldSpecs)
 		hero:SetEnergyMaintenanceConsumptionOverride(5)
@@ -1351,7 +1261,7 @@ function HeroUp(hero)
 		hero:SetRegen(800)
 		value = 25
 		local weapon = hero:GetWeapon(1)
-		weapon:ChangeMaxRadius(value-10)
+		weapon:ChangeMaxRadius(value+15)
 		weapon:AddDamageRadiusMod(6)
 		local v = 3
 		weapon:ChangeRateOfFire(v)
@@ -1367,21 +1277,21 @@ end
 
 PodUp = function(p)
 
-		local ShieldSpecs = {
+	local ShieldSpecs = {
 		ImpactEffects = 'UEFShieldHit01',
 		ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
 		Mesh = '/effects/entities/Shield01/Shield01_mesh',
 		MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
-        PersonalBubble = true,
-        RegenAssistMult = 60,
-        ShieldEnergyDrainRechargeTime = 5,
-        ShieldMaxHealth = 500,
-        ShieldRechargeTime = 50,
-        ShieldRegenRate = 400,
-        ShieldRegenStartTime = 2,
-        ShieldSize = 1.5,
-        ShieldVerticalOffset = 0,
-    }
+        	PersonalBubble = true,
+        	RegenAssistMult = 60,
+        	ShieldEnergyDrainRechargeTime = 5,
+        	ShieldMaxHealth = 500,
+        	ShieldRechargeTime = 50,
+        	ShieldRegenRate = 400,
+        	ShieldRegenStartTime = 2,
+        	ShieldSize = 1.5,
+        	ShieldVerticalOffset = 0,
+   	}
 	p:SetEnergyMaintenanceConsumptionOverride(1)
 	p:SetMaxHealth(2000)
 	p:SetHealth(nil, 2000)
