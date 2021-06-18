@@ -4,7 +4,7 @@
 --see also https://github.com/P4r4lon/directstrike
 
 --------------------------------------------------------------------------------
-local mapPath = '/maps/directstrike_faf.v0045/'
+local mapPath = '/maps/directstrike_faf.v0046/'
 local ScenarioUtils = import('/lua/sim/ScenarioUtilities.lua')
 local ScenarioFramework = import('/lua/ScenarioFramework.lua')
 local Utilities = import('/lua/utilities.lua')
@@ -15,8 +15,8 @@ local restrictions = (categories.BUILTBYTIER1ENGINEER - categories.DIRECTFIRE) +
 
 function OnPopulate()
 	ScenarioInfo.Options.Victory = 'sandbox'
-    	ScenarioUtils.InitializeArmies()
-    	ScenarioFramework.SetPlayableArea('AREA_1' , false)
+    ScenarioUtils.InitializeArmies()
+    ScenarioFramework.SetPlayableArea('AREA_1' , false)
 	fixSpreadAttack()
 	import('/lua/selfdestruct.lua').ToggleSelfDestruct = function(data) end
 	import('/lua/SimUtils.lua').GiveUnitsToPlayer = function() end
@@ -27,7 +27,7 @@ function OnPopulate()
 	end 
 	
 	-- ScenarioInfo.CampaignMode = true
-    	-- Sync.CampaignMode = true
+    -- Sync.CampaignMode = true
 	-- import('/lua/sim/simuistate.lua').IsCampaign(true)
 
 end
@@ -263,10 +263,12 @@ function GetPlayersOnline()
 		if h.ArmyId != nil and not IsAlly(h.ArmyId, ally) then
 			h.teamindex = 2				
 		end	
-	end	
+	end
 	LOG(repr(Humans))
 	ForkThread(CumBackSystem)
 end
+
+
 
 function dialoguemanager()
 	if GetFocusArmy() == -1 then 
@@ -373,19 +375,19 @@ function CreateDefSet()
 		cashextractor:SetCanBeKilled(false)
 		cashextractor:HideBone(0, true)
 		cashextractor.Big = import('/lua/sim/Entity.lua').Entity({Owner = cashextractor,})
-       		cashextractor.Big:SetMesh(cashextractor:GetBlueprint().Display.MeshBlueprint, true)
-       		cashextractor.Big:SetScale(0.3)
-       		cashextractor.Big:AttachBoneTo(0, cashextractor, 0)
-			
+       	cashextractor.Big:SetMesh(cashextractor:GetBlueprint().Display.MeshBlueprint, true)
+       	cashextractor.Big:SetScale(0.3)
+       	cashextractor.Big:AttachBoneTo(0, cashextractor, 0)
+	
 		local omni = CreateUnitHPR('UEB3104','ParagonArmy'..i, pos[1], pos[2], pos[3] + alignment + alignment/2, 0,0,0);	
 		omni:SetCustomName('OMNI sensor '..OmniCost)
 		omni:SetCanBeKilled(false)
 		omni:SetIntelRadius('Radar', 1)
 		omni:SetIntelRadius('Omni', 1)
 		omni.Big = import('/lua/sim/Entity.lua').Entity({Owner = omni,})
-       		omni.Big:SetMesh(omni:GetBlueprint().Display.MeshBlueprint, true)
-       		omni.Big:SetScale(0.3)
-       		omni.Big:AttachBoneTo(0, omni, 0)
+       	omni.Big:SetMesh(omni:GetBlueprint().Display.MeshBlueprint, true)
+       	omni.Big:SetScale(0.3)
+       	omni.Big:AttachBoneTo(0, omni, 0)
 	end
 	
 	MakeSomeRallyPoints()
@@ -475,8 +477,8 @@ CostFix = function(unit)
 	end
 end
 
-PutCostOnMap = function(cost, unitX, unitY, unitZ, armyId, unitType)
-	local pathPrefix = mapPath .. 'decals/numbers/'
+PutCostOnMap = function(cost, unitX, unitY, unitZ, armyId, unitType) --Thanks to KeyBlue
+	local pathPrefix = mapPath .. 'env/decals/numbers/'
 	local pathPostfix = 'number.dds'
 
 	local Offset = function(type) 
@@ -579,12 +581,12 @@ function shopchecker()
 							local cost = CostFix(guarded)
 							local name = LOC(bp.General.UnitName)
 							if factionname == Factions[Humans[i].index] and CheckUnit(string.upper(id)) == true then 
-								if cost != nil and id != nil then 
+								if cost ~= nil and id ~= nil then
 									if cost <= Humans[i].cashpoints then 
 										ItsNowUrUnit(Humans[i].ArmyId, cost, id)
 										local text = ''
 
-										if name != nil or (id == 'xsl0301') then 
+										if name ~= nil or (id == 'xsl0301') then
 											local w = WipeWave..strings['wave']
 											if table.contains(Experimentals, id) == true then 
 												w = ExpWipeWave..'wave(s)'
@@ -1234,19 +1236,19 @@ function HeroUp(hero)
 			hero:CreateMyEnhancement('Pod', 30)
 			
 		local ShieldSpecs = {
-			ImpactEffects = 'UEFShieldHit01',
-			ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
-			Mesh = '/effects/entities/Shield01/Shield01_mesh',
-			MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
-      	  		PersonalBubble = true,
-       			RegenAssistMult = 60,
-       	 		ShieldEnergyDrainRechargeTime = 5,
-        		ShieldMaxHealth = 200000,
-        		ShieldRechargeTime = 200,
-        		ShieldRegenRate = 1000,
-        		ShieldRegenStartTime = 2,
-        		ShieldSize = 15,
-        		ShieldVerticalOffset = 15,
+		ImpactEffects = 'UEFShieldHit01',
+		ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
+		Mesh = '/effects/entities/Shield01/Shield01_mesh',
+		MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
+        PersonalBubble = true,
+        RegenAssistMult = 60,
+        ShieldEnergyDrainRechargeTime = 5,
+        ShieldMaxHealth = 200000,
+        ShieldRechargeTime = 200,
+        ShieldRegenRate = 1000,
+        ShieldRegenStartTime = 2,
+        ShieldSize = 15,
+        ShieldVerticalOffset = 15,
 		}
 		--hero:CreateShield(ShieldSpecs)
 		hero:SetEnergyMaintenanceConsumptionOverride(5)
@@ -1277,21 +1279,21 @@ end
 
 PodUp = function(p)
 
-	local ShieldSpecs = {
+		local ShieldSpecs = {
 		ImpactEffects = 'UEFShieldHit01',
 		ImpactMesh = '/effects/entities/ShieldSection01/ShieldSection01_mesh',
 		Mesh = '/effects/entities/Shield01/Shield01_mesh',
 		MeshZ = '/effects/entities/Shield01/Shield01z_mesh',
-        	PersonalBubble = true,
-        	RegenAssistMult = 60,
-        	ShieldEnergyDrainRechargeTime = 5,
-        	ShieldMaxHealth = 500,
-        	ShieldRechargeTime = 50,
-        	ShieldRegenRate = 400,
-        	ShieldRegenStartTime = 2,
-        	ShieldSize = 1.5,
-        	ShieldVerticalOffset = 0,
-   	}
+        PersonalBubble = true,
+        RegenAssistMult = 60,
+        ShieldEnergyDrainRechargeTime = 5,
+        ShieldMaxHealth = 500,
+        ShieldRechargeTime = 50,
+        ShieldRegenRate = 400,
+        ShieldRegenStartTime = 2,
+        ShieldSize = 1.5,
+        ShieldVerticalOffset = 0,
+    }
 	p:SetEnergyMaintenanceConsumptionOverride(1)
 	p:SetMaxHealth(2000)
 	p:SetHealth(nil, 2000)
